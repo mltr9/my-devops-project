@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "81:81"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - webapp1
+      - webapp2
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  webapp1:
+    build:
+      context: ./webapp1
+    environment:
+      DATABASE_URL: postgres://user:password@postgres/mydatabase
+  webapp2:
+    build:
+      context: ./webapp2
+    environment:
+      DATABASE_URL: postgres://user:password@postgres/mydatabase
+
+volumes:
+  db-data:
+
